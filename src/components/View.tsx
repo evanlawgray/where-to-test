@@ -19,13 +19,13 @@ const LoadingText = styled.p`
 `;
 
 const getApi = (endPoint: any) => `http://demo.subsonic.org/rest/${endPoint}?u=guest&p=guest&v=1.12.0&c=whereto&f=json`;
-const ALBUMS_LIST = `${getApi('getAlbumList2')}&type=recent&size=10`;
+const albumListApi = `${getApi('getAlbumList2')}&type=recent&size=10`;
 const getAlbumInfoApi = (id: any) => `${getApi('getAlbum')}&id=${id}`;
 const getCoverArtApi = (id: any) => `${getApi('getCoverArt')}&id=${id}`;
 
 async function getAlbums(setAlbums: any) {
     const albums = [];
-    let response: any = await fetch(ALBUMS_LIST);
+    let response: any = await fetch(albumListApi);
     response = await response.json();
 
     const albumInfo = await Promise.all(response['subsonic-response'].albumList2.album.map(async ({ id }: any) => {

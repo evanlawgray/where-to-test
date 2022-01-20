@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 
-const Wrapper = styled.div`
+const Wrapper = styled.section`
     padding: 10px;
     width: 1500px;
     border: 1px solid black;

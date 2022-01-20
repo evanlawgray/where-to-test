@@ -1,46 +1,34 @@
-# Getting Started with Create React App
+# WhereTo FrontEnd Engineering Test
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+To start app, install dependencies and run `npm start` from the CLI.
 
-## Available Scripts
+## Improvements
+- Q: What changes would you need to make to allow the user to "star" their favorite tracks?
+- A: A clickable star icon (or similar) could be added for each row within the TrackList component. This would be linked to a new piece of state e.g. "favouritedTracks", which could be organized by albums using an object/map for fast look-ups:
+```
+{
+    [albumId]: {
+        [trackId]: true // boolean represented whether or not the track has been favourited
+    },
+}
+```
+Clicking on the star icon would add a new key-value pair to the object representing favourites on the given album, and the star icon could be "filled-in"/coloured if the lookup on `favouritedTracks` using the albumId and trackId returns `true`;
 
-In the project directory, you can run:
+- Q: How could the interface be made more responsive when a large number of albums must be loaded?
+- A: Pagination could be implemented so that the first batch of n items is loaded on initial page load, and then when the user scroll past a given threshold (e.g n - 3), a request would be triggered to load the next page of data. Also, placeholder content could be rendered in the Gallery and Tracklist components while waiting for the API call to complete, perhaps with an animation or loading indicator to tell the user that the requested data is being fetched.
 
-### `npm start`
+- Q: How could you make the album list scroll vertically along the left side if the window is narrow?
+- A: I would change the layour by changin the View container layout to use either `flex-direction: row`, or remove `display: flex` entirely and allow its children to be positioned in the normal flow layout using `display: inline-block` to allow them to sit on the same line. I would then adjust the width/height of the respective elements to account for the narrow screen width, using relative units like % or vw/vh. This would require a revision to the scroll logic as well, since it is currently based on arithmetic using static pixel dimensions of the container and album cover `<img>` elements. The position of the album covers would be calculated using the gallery height, instead of width, which could be measured by attaching a ref to the gallery wrapper element and referencing its `offsetHeight` property. To calculate a % offset based on the viewing index, we could use `((index - viewingIndex) * (COVER_SIZE / galleryWrapperRef.current.offsetHeight))`. The resulting number would then be assigned to each element's `top` position property, rather than `left` as with the horizontal scrolling.
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+- Q: What other ideas do you have for improvements or features that could be added to the product?
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+1. Adjust the styling to be less "boxy", using fewer borders and square shapes, and add a complementary colour scheme to avoid gray backgrounds.
+2. As mentioned above, make the layout responsive using relative units for sizing/positioning. Add media queries to adjust sizes and layouts of elements at different breakpoints, and switch from vertical scrolling layout on small screens to a horizontal scrolling layout on larger ones. This would require conditional logic in the Gallery component to transition between the vertical and horizontal scroll position calculation mentioned above once the screen reaches a certain width.
+3. Infinite scrolling/pagination with virtualization of elements could be added to allow the user to view larger data sets without interrupting the UX. Placeholder content could be displayed to provide visual feedback and allow the UI to remain interactable during page loads.
+4. A "Preview" feature could be added, allowing the user to stream a snippet of each song by clicking a speaker icon on each row on the tracklist.
+5. Once a "favourites" data set is created via the "starring" functionality mentioned above, you could use the `getSimilarSongs` endpoint of the Subsonic API to construct a list of songs/albums similar to the user's favourites.
+6. A "get more albums by this artist" feature could be implemented by adding a link/button to the Tracklist component, which would query the `getArtist` endpoint to retrieve a list of the artist's albums, and the `getAlbum` and `getCoverArt` endpoints to construct a scrolling gallery view for the selected artist only.
+7. By adding an extra query to the `getArtistInfo` API, we could add an information section above the tracklist table providing the artists biography, image and a list of similar artists.
+8. Add visual feedback to emphasize the currently selected album in the gallery (implemented in my example using box-shadow).
 
-### `npm test`
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
-
-### `npm run build`
-
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
-
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
