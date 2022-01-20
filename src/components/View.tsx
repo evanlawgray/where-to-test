@@ -1,14 +1,21 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
 import { Gallery } from './Gallery';
+import { TrackList } from './TrackList';
 
 const Wrapper = styled.main`
     height: 100%;
     width: 100%;
+    padding: 25px;
     overflow-y: auto;
     display: flex;
     flex-flow: column nowrap;
     align-items: center;
+`;
+
+const LoadingText = styled.p`
+    font-size: 22px;
+    font-style: italic;
 `;
 
 const getApi = (endPoint: any) => `http://demo.subsonic.org/rest/${endPoint}?u=guest&p=guest&v=1.12.0&c=whereto&f=json`;
@@ -40,8 +47,10 @@ async function getAlbums(setAlbums: any) {
 }
 export const View: React.FC<{}> = () => {
     const [albums, setAlbums] = useState([]);
+    const [viewingIndex, setViewingIndex] = useState(0);
 
-    console.log('ALBUMS', albums);
+    const selectedAlbum = useMemo(() => albums[viewingIndex], [viewingIndex, albums]);
+
     useEffect(() => {
         getAlbums(setAlbums);
     }, []);
@@ -49,7 +58,18 @@ export const View: React.FC<{}> = () => {
     return (
         <Wrapper>
             {
-                <Gallery albums={albums}/>
+                !!albums.length
+                    ? (
+                        <>
+                        <Gallery
+                            albums={albums}
+                            viewingIndex={viewingIndex}
+                            setViewingIndex={setViewingIndex}
+                        />
+                        <TrackList album={selectedAlbum}/>
+                        </>
+                    )
+                    : <LoadingText>Loading...</LoadingText>
             }
         </Wrapper>
     );

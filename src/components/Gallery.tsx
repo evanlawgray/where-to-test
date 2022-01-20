@@ -1,71 +1,90 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
 
-import { AlbumCover } from './AlbumCover';
-
-const GALLERY_WIDTH = 1200;
-const ALBUMS_LENGTH = 10;
-const COVER_WIDTH = 150;
-
-const CoversContainer = styled.div<{ viewingIndex: number }>`
-    height: 100%;
-    width: 1200px;
-    overflow: hidden;
-    display: flex;
-    flex-flow: row nowrap;
-    // transform: translateX(${({ viewingIndex }) => 600 - (viewingIndex * COVER_WIDTH)}px);
-    z-index: 1;
-`;
+const GALLERY_WIDTH = 1500;
+const COVER_SIZE = 150;
 
 const GalleryWrapper = styled.div`
-    width: 75%;
-    max-width: 1200px;
-    height: 200px
-    padding: 15px;
+    width: auto;
+    height: auto;
+    min-height: 180px;
     display: flex;
     flex-flow: row nowrap;
+    align-items: center;
     overflow: hidden;
-    background: lightgray;
+`;
+
+const CoversContainer = styled.div<{ viewingIndex: number }>`
+    background: #EEEEEE;
+    height: 180px;
+    width: ${GALLERY_WIDTH}px;
+    margin: 0 10px;
+    padding: 15px;
+    border: 1px solid black;
+    border-bottom: none;
+    box-sizing: border-box;
+    overflow: hidden;
+    position: relative;
 `;
 
 const ArrowButton = styled.div`
     height: 50px;
     width: 50px;
     border: 1 px solid black;
-    background: gray;
-    z-index: 2;
+    background: #B0B0B0;
+    display: flex;
+    flex-flow: column nowrap;
+    justify-content: center;
+`;
+
+const Cover = styled.img<{ position: number; isSelected: boolean }>`
+    height: ${COVER_SIZE}px;
+    width: ${COVER_SIZE}px;
+    border: 1px solid white;
+    box-sizing: border-box;
+    position: absolute;
+    left: ${({ position }) => `${position}px`};
+    transition: left 250ms linear;
+
+    ${({ isSelected }) => isSelected && `
+        box-shadow: 2px 4px 10px gray;
+    `}
 `;
 
 export const Gallery = (props: any) => {
-    const [viewingIndex, setViewingIndex] = useState(0);
-    const { albums } = props;
-
-    const albums1 = albums.slice(viewingIndex);
-    const albums2 = albums.slice(0, viewingIndex);
-    const albumsList = [].concat(albums1, albums2);
+    const {
+        albums,
+        viewingIndex,
+        setViewingIndex,
+    } = props;
 
     return (
         <GalleryWrapper>
             <ArrowButton
-                onClick={() => setViewingIndex((curr) => {
-                    return curr > 0 ? curr - 1 : 9
-                })}
+                onClick={() => setViewingIndex((curr: number) => curr > 0 ? curr - 1 : 9)}
             >
                 &lArr;
             </ArrowButton>
             <CoversContainer viewingIndex={viewingIndex}>
                 {
-                    albumsList.map(({ image }: any) => (
-                        <AlbumCover
-                            src={image}
-                        />
-                    ))
+                    albums.map(({ image }: any, index: number) => {
+                        const position = (
+                            ((index - viewingIndex) * (COVER_SIZE + 15))
+                            + ((GALLERY_WIDTH / 2) - (COVER_SIZE / 2))
+                        );
+
+                        return (
+                            <Cover
+                                src={image}
+                                position={position}
+                                isSelected={index === viewingIndex}
+                            />
+                        );
+                    })
                 }
             </CoversContainer>
             <ArrowButton
-                onClick={() => setViewingIndex((curr) => {
-                    return  curr < 9 ? curr + 1 : 0
-                })}
+                onClick={() => setViewingIndex((curr: number) => curr < 9 ? curr + 1 : 0)}
             >
                 &rArr;
             </ArrowButton>
